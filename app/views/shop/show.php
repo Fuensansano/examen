@@ -22,7 +22,13 @@
     <h4>Resumen:</h4>
     <?= html_entity_decode($data['data']->description) ?>
 <?php endif; ?>
+<?php if ($_SERVER['HTTP_REFERER'] === 'http://examen.local/books'): ?>
+    <a href="<?= ROOT . (!empty($data['back']) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de libros</a>
+<?php elseif ($_SERVER['HTTP_REFERER'] === 'http://examen.local/courses'): ?>
+    <a href="<?= ROOT . (!empty($data['back']) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de cursos</a>
+    <?php else: ?>
     <a href="<?= ROOT . (!empty($data['back']) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de productos</a>
+<?php endif; ?>
 <?php if(isset($_SESSION['user'])): ?>
     <a href="<?= ROOT ?>cart/addProduct/<?= $data['data']->id ?>/<?= $data['user_id'] ?>" class="btn btn-primary">Comprar</a>
 <?php else: ?>
