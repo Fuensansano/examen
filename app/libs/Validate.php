@@ -48,9 +48,16 @@ class Validate
         $type = $info['mime'];
 
         $factor = $newWidth / $width;
-        $newHeight = $factor * $height;
+        $newHeight = round($factor * $height,0, PHP_ROUND_HALF_DOWN);
 
-        $image = imagecreatefromjpeg($file);
+        //aquí no dejaba que subieramos imagenes png, vamos a solucionarlo con dos if, ya que sólo estamos
+        //usando el método imagecreatefromjpeg();
+
+        if ($info[2] == IMAGETYPE_JPEG) {
+            $image = imagecreatefromjpeg($file);
+        } else {
+            $image = imagecreatefrompng($file);
+        }
 
         $canvas = imagecreatetruecolor($newWidth, $newHeight);
 
