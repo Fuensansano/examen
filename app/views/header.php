@@ -59,12 +59,15 @@
                     </li>
 
                     <li class="nav-item d-flex flex-row">
-                        <?php if(isset($_SESSION['user'])):?>
+                        <?php if(isset($_SESSION['user']) || isset($_SESSION['admin'])):?>
                             <a href="<?= ROOT ?>shop/logout" class="nav-link text-light me-2 ms-2">Salir</a>
                         <?php else: ?>
                             <a href="<?= ROOT ?>login/index" class="nav-link text-light me-2 ms-2">Login</a>
                             <a href="<?= ROOT ?>login/registro" class="nav-link text-light me-2 ms-2">Registro</a>
+                        <?php endif; ?>
 
+                        <?php if(isset($_SESSION['admin'])):?>
+                            <a href="<?= ROOT ?>adminShop/index" class="nav-link text-light me-2 ms-2">Administrar</a>
                         <?php endif; ?>
                     </li>
                 </ul>
@@ -94,13 +97,13 @@
         </div>
         <div class="col-sm-8">
             <?php if (isset($data['errors']) && count($data['errors']) > 0) : ?>
-            <div class="alert alert-danger mt-3">
-                <ul class="list-group">
-                    <?php foreach($data['errors'] as $value) : ?>
-                        <li class="list-group-item alert alert-danger">
-                            <strong><?= $value ?></strong>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            </div>
-<?php endif; ?>
+                <div class="alert alert-danger mt-3">
+                    <ul class="list-group">
+                        <?php foreach($data['errors'] as $value) : ?>
+                            <li class="list-group-item alert alert-danger">
+                                <strong><?= $value ?></strong>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>

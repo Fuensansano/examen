@@ -35,7 +35,7 @@ class AddressController extends Controller
             'address' => $_POST['address'] ?? '',
             'city' => $_POST['city'] ?? '',
             'state' => $_POST['state'] ?? '',
-            'zipcode' => $_POST['postcode'] ?? '',
+            'zipcode' => $_POST['zipcode'] ?? '',
             'country' => $_POST['country'] ?? ''
         ];
 
@@ -74,12 +74,11 @@ class AddressController extends Controller
     public function validateAddress()
     {
         $errors = [];
-        $dataForm = [];
 
         $address = $_POST['address'] ?? '';
         $city = $_POST['city'] ?? '';
         $state = $_POST['state'] ?? '';
-        $zipcode = $_POST['postcode'] ?? '';
+        $zipcode = $_POST['zipcode'] ?? '';
         $country = $_POST['country'] ?? '';
 
         $errors = Validate::validateName($address,$errors);

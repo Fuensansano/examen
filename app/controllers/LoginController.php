@@ -116,100 +116,33 @@ class LoginController extends Controller
 
         }
     }
-
     public function registro()
     {
-        $registerErrors = [];
-        $errors = [];
-        $dataForm = [];
-
         if($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->showRegisterForm();
         }
-        // Procesamos la información recibida del formulario
-        $firstName = $_POST['first_name'] ?? '';
-        $lastName1 = $_POST['last_name_1'] ?? '';
-        $lastName2 = $_POST['last_name_2'] ?? '';
-        $email = $_POST['email'] ?? '';
-        $password1 = $_POST['password'] ?? '';
-        $password2 = $_POST['password2'] ?? '';
-        $address = $_POST['address'] ?? '';
-        $city = $_POST['city'] ?? '';
-        $state = $_POST['state'] ?? '';
-        $postcode = $_POST['postcode'] ?? '';
-        $country = $_POST['country'] ?? '';
 
         $dataForm = [
-            'firstName' => $firstName,
-            'lastName1' => $lastName1,
-            'lastName2' => $lastName2,
-            'email' 	=> $email,
-            'password'  => $password1,
-            'address'	=> $address,
-            'city'		=> $city,
-            'state'		=> $state,
-            'zipcode'	=> $postcode,
-            'country'	=> $country
+            'firstName' => $_POST['first_name'] ?? '',
+            'lastName1' => $_POST['last_name_1'] ?? '',
+            'lastName2' => $_POST['last_name_2'] ?? '',
+            'email' 	=> $_POST['email'] ?? '',
+            'password'  => $_POST['password'] ?? '',
+            'address'	=> $_POST['address'] ?? '',
+            'city'		=> $_POST['city'] ?? '',
+            'state'		=> $_POST['state'] ?? '',
+            'zipcode'	=> $_POST['zipcode'] ?? '',
+            'country'	=> $_POST['country'] ?? '',
         ];
 
-        if ($firstName === '') {
-            array_push($registerErrors, 'El nombre es requerido');
-        }
-        if ($lastName1 === '') {
-            array_push($registerErrors, 'El primer apellido es requerido');
-        }
-        if ($lastName2 === '') {
-            array_push($registerErrors, 'El segundo apellido es requerido');
-        }
-        if ($email === '') {
-            array_push($registerErrors, 'El email es requerido');
-        }
-        if ($password1 === '') {
-            array_push($registerErrors, 'La contraseña es requerido');
-        }
-        if ($password2 === '') {
-            array_push($registerErrors, 'Repetir contraseña es requerido');
-        }
-        if ($password1 !== $password2) {
-            array_push($registerErrors, 'Las contraseñas deben ser iguales');
-        }
+        $errors = $this->validateRegisterFormWithAddressInfo(); //aqui se valiadan usu
 
-        $addressController = $this->createAddressController();
-        $errors = array_merge($registerErrors, $addressController->validateAddress());
-
-        if (count($errors)) {
-            $data = [
-                'titulo' => 'Registro',
-                'menu'   => false,
-                'errors' => $errors,
-                'dataForm' => $dataForm
-            ];
-
-            $this->view('register', $data);
-            return;
-        }
-
-        if (!$this->model->createUser($dataForm)) {
-            $errors[] = 'Error en el proceso de registro. Probablemente el correo utilizado ya exista. Pruebe con otro';
+        if ($errors) {
             $this->showErrorsOnRegister($dataForm, $errors);
             return;
         }
 
-        $user = $this->model->getUserByEmail($dataForm['email']);
-        $this->session->login($user);
-
-        $addressDTO = [
-            'user_id'   => $user->id,
-            'address'	=> $address,
-            'city'		=> $city,
-            'state'		=> $state,
-            'zipcode'	=> $postcode,
-            'country'	=> $country
-        ];
-
-        $errors = $addressController->createAddress($addressDTO);
-        if (count($errors)) {
-            $this->showErrorsOnRegister($dataForm, $errors);
+        if (! $this->createUser($dataForm)) {
             return;
         }
 
@@ -223,19 +156,19 @@ class LoginController extends Controller
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $id = $_POST['id'] ?? '';
-            $password1 = $_POST['password1'] ?? '';
+            $password = $_POST['password'] ?? '';
             $password2 = $_POST['password2'] ?? '';
 
             if ($id == '') {
                 array_push($errors, 'El usuario no existe');
             }
-            if ($password1 == '') {
+            if ($password == '') {
                 array_push($errors, 'La contraseña es requerida');
             }
             if ($password2 == '') {
                 array_push($errors, 'Repetir contraseña es requerido');
             }
-            if ($password1 != $password2) {
+            if ($password != $password2) {
                 array_push($errors, 'Ambas claves deben ser iguales');
             }
 
@@ -253,7 +186,7 @@ class LoginController extends Controller
 
             } else {
 
-                if ($this->model->changePassword($id, $password1)) {
+                if ($this->model->changePassword($id, $password)) {
 
                     $data = [
                         'titulo' => 'Cambiar contraseña',
@@ -310,13 +243,14 @@ class LoginController extends Controller
 
             $errors = $this->model->verifyUser($user, $password);
 
+
             $value = $user . '|' . $password;
             if ($remember == 'on') {
                 $date = time() + (60*60*24*7);
             } else {
                 $date = time() - 1;
             }
-            setcookie('shoplogin', $value, $date);
+            setcookie('shoplogin', $value, $date, ROOT);
 
             $dataForm = [
                 'user' => $user,
@@ -326,6 +260,11 @@ class LoginController extends Controller
             if ( ! $errors ) {
                 $data = $this->model->getUserByEmail($user);
                 $this->session->login($data);
+
+                $admin = $this->model->getAdminByEmail($user);
+                if ($admin) {
+                    $this->session->adminLogin($admin);
+                }
 
                 header("location:" . ROOT . 'shop');
             } else {
@@ -385,6 +324,80 @@ class LoginController extends Controller
     {
         require_once '../app/controllers/AddressController.php';
         return new AddressController();
+    }
+
+    public function validateRegisterFormWithAddressInfo(): array
+    {
+        $registerErrors = [];
+        $firstName = $_POST['first_name'] ?? '';
+        $lastName1 = $_POST['last_name_1'] ?? '';
+        $lastName2 = $_POST['last_name_2'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $password = $_POST['password'] ?? '';
+        $password2 = $_POST['password2'] ?? '';
+
+        $registerErrors = Validate::validateName($firstName,$registerErrors);
+        $registerErrors = Validate::validateName($lastName1,$registerErrors);
+        $registerErrors = Validate::validateName($lastName2,$registerErrors);
+        $registerErrors = Validate::validateEmail($email,$registerErrors);
+        $registerErrors = Validate::validateName($password,$registerErrors);
+        $registerErrors = Validate::validateName($password2,$registerErrors);
+        $registerErrors = Validate::validateName($password2,$registerErrors);
+        $registerErrors = Validate::validatePassword1SameAsPassword2($password,$password2,$registerErrors);
+
+        $addressController = $this->createAddressController();
+        return array_merge($registerErrors, $addressController->validateAddress());
+    }
+
+    public function createUser($dataForm): bool
+    {
+        if (!$this->model->createUser($dataForm)) {
+            $data = [
+                'titulo' => 'Creación de usuario',
+                'menu' => false,
+                'errors' => [],
+                'subtitle' => 'Creación de usuario',
+                'text' => 'Error creando al usuario',
+                'color' => 'alert-success',
+                'url' => 'login',
+                'colorButton' => 'btn-success',
+                'textButton' => 'Regresar',
+            ];
+            $this->view('mensaje', $data);
+            return false;
+        }
+
+        $user = $this->model->getUserByEmail($dataForm['email']);
+        $this->session->login($user);
+
+        $addressDTO = [
+            'user_id'   => $user->id,
+            'address'	=> $dataForm['address'],
+            'city'		=> $dataForm['city'],
+            'state'		=> $dataForm['state'],
+            'zipcode'	=> $dataForm['zipcode'],
+            'country'	=> $dataForm['country']
+        ];
+
+        $addressController = $this->createAddressController();
+        $errors = $addressController->createAddress($addressDTO);
+        if ($errors) {
+            $data['errors'] = $errors;
+            $data = [
+                'titulo' => 'Creación de dirección',
+                'menu' => false,
+                'errors' => [],
+                'subtitle' => 'Error en la creación de la dirección del usuario',
+                'text' => $errors[0],
+                'color' => 'alert-success',
+                'url' => 'login',
+                'colorButton' => 'btn-success',
+                'textButton' => 'Regresar',
+            ];
+            $this->view('mensaje', $data);
+            return false;
+        }
+        return true;
     }
 
 }

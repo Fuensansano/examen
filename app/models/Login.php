@@ -103,7 +103,16 @@ class Login
         } elseif ($user->password != $pass) {
             array_push($errors, 'La contraseña no es correcta');
         }
-
         return $errors;
+    }
+
+    public function getAdminByEmail($email)
+    {
+        $sql = 'SELECT * FROM admins WHERE email=:email  AND status = 1';
+        $query = $this->db->prepare($sql);
+        $query->bindParam(':email', $email, PDO::PARAM_STR);
+        $query->execute();
+
+        return $query->fetch(PDO::FETCH_OBJ);
     }
 }

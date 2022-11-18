@@ -136,4 +136,16 @@ class AdminUser
 
         return $errors;
     }
+
+    public function getUserByEmail($email)
+    {
+        $sql = 'SELECT * FROM admins WHERE email = :email AND deleted = 0';
+        $query = $this->db->prepare($sql);
+        $params = [
+            'email' => $email,
+        ];
+        $query->execute($params);
+
+        return $query->fetchAll(PDO::FETCH_OBJ);
+    }
 }
