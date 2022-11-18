@@ -57,13 +57,13 @@ class AdminProductController extends Controller
             $new = isset($_POST['new']) ? '1' : '0';
             $status = $_POST['status'] ?? '';
             //Books
-            $author = Validate::text($_POST['author'] ?: 'Pepe');
-            $publisher = Validate::text($_POST['publisher'] ?: 'José');
-            $pages = Validate::number($_POST['pages'] ?: '100');
-            //Courses
-            $people = Validate::text($_POST['people'] ?: 'Novatos');
-            $objetives = Validate::text($_POST['objetives'] ?: 'Desde la nada al todo en PHP');
-            $necesites = Validate::text($_POST['necesites'] ?: 'Ganas, muchas ganas');
+            $author = Validate::text($_POST['author'] ?? '');
+            $publisher = Validate::text($_POST['publisher'] ?? '');
+            $pages = Validate::number($_POST['pages'] != '' ? $_POST['pages'] : 0);
+//Courses
+            $people = Validate::text($_POST['people'] ?? '');
+            $objetives = Validate::text($_POST['objetives'] ?? '');
+            $necesites = Validate::text($_POST['necesites'] ?? '');
 
             // Validamos la información
             if (empty($name)) {
