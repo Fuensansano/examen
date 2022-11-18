@@ -19,7 +19,7 @@
                     <td class="text-center"><?= $product->id ?></td>
                     <td class="text-center"><?= $data['type'][$product->type - 1]->description ?></td>
                     <td class="text-center"><?= $product->name ?></td>
-                    <td class="text-center"><?= html_entity_decode($product->description) ?></td>
+                    <td class="text-center"><?= descriptionDelimited(html_entity_decode($product->description)) ?></td>
                     <td class="text-center">
                         <a href="<?= ROOT ?>adminProduct/update/<?= $product->id ?>"
                            class="btn btn-info"
@@ -49,3 +49,13 @@
     </div>
 </div>
 <?php include_once(VIEWS . 'footer.php')?>
+
+<?php
+function descriptionDelimited($string){
+    $limit = 30;
+    if(strlen($string) > $limit) {
+        return substr($string, 0, $limit);
+    }
+
+    return $string;
+}
