@@ -12,24 +12,18 @@ class ShopController extends Controller
 
     public function index()
     {
-        if ($this->session->getLogin()) {
+        $mostSold = $this->model->getMostSold();
+        $news = $this->model->getNews();
 
-            $mostSold = $this->model->getMostSold();
-            $news = $this->model->getNews();
-
-            $data = [
-                'titulo' => 'Bienvenid@ a nuestra tienda',
-                'menu' => true,
-                'subtitle' => 'Artículos mas vendidos',
-                'data' => $mostSold,
-                'subtitle2' => 'Artículos nuevos',
-                'news' => $news,
-            ];
-            $this->view('shop/index', $data);
-        } else {
-            header('location:' . ROOT);
-        }
-
+        $data = [
+            'titulo' => 'Bienvenid@ a nuestra tienda',
+            'menu' => true,
+            'subtitle' => 'Artículos mas vendidos',
+            'data' => $mostSold,
+            'subtitle2' => 'Artículos nuevos',
+            'news' => $news,
+        ];
+        $this->view('shop/index', $data);
     }
 
     public function logout()
@@ -57,19 +51,13 @@ class ShopController extends Controller
 
     public function whoami()
     {
+        $data = [
+            'titulo' => 'Quienes somos',
+            'menu' => true,
+            'active' => 'whoami',
+        ];
 
-        if ($this->session->getLogin()) {
-
-            $data = [
-                'titulo' => 'Quienes somos',
-                'menu' => true,
-                'active' => 'whoami',
-            ];
-
-            $this->view('shop/whoami', $data);
-        } else {
-            header('location:' . ROOT);
-        }
+        $this->view('shop/whoami', $data);
     }
 
     public function contact()
@@ -131,19 +119,13 @@ class ShopController extends Controller
                 $this->view('shop/contact', $data);
             }
         } else {
-            if ($this->session->getLogin()) {
+            $data = [
+                'titulo' => 'Contacta con nosotros',
+                'menu' => true,
+                'active' => 'contact',
+            ];
 
-                $data = [
-                    'titulo' => 'Contacta con nosotros',
-                    'menu' => true,
-                    'active' => 'contact',
-                ];
-
-                $this->view('shop/contact', $data);
-            } else {
-                header('location:' . ROOT);
-            }
-
+            $this->view('shop/contact', $data);
         }
     }
 }

@@ -1,8 +1,8 @@
 <?php include_once dirname(__DIR__) . ROOT . 'header.php'?>
-<h2 class="text-center"><?= $data['subtitle'] ?></h2>
-<img src="<?= ROOT ?>img/<?= $data['data']->image ?>" class="rounded float-right" alt="">
-<h4>Precio:</h4>
-<p><?= number_format($data['data']->price, 2) ?>€</p>
+    <h2 class="text-center"><?= $data['subtitle'] ?></h2>
+    <img src="<?= ROOT ?>img/<?= $data['data']->image ?>" class="rounded float-right" alt="">
+    <h4>Precio:</h4>
+    <p><?= number_format($data['data']->price, 2) ?>€</p>
 <?php if ($data['data']->type == 1): ?>
     <h4>Descripción:</h4>
     <?= html_entity_decode($data['data']->description) ?>
@@ -22,9 +22,9 @@
     <h4>Resumen:</h4>
     <?= html_entity_decode($data['data']->description) ?>
 <?php endif; ?>
-<a href="<?= ROOT . (!empty($data['back']) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de productos</a>
-<a href="<?= ROOT ?>cart/addproduct/<?= $data['data']->id ?>/<?= $data['user_id'] ?>" class="btn btn-primary">Comprar</a>
-<?php include_once dirname(__DIR__) . ROOT . 'footer.php'?>
-
-
-
+    <a href="<?= ROOT . (!empty($data['back']) ? $data['back'] : 'shop') ?>" class="btn btn-success">Volver al listado de productos</a>
+<?php if(isset($_SESSION['user'])): ?>
+    <a href="<?= ROOT ?>cart/addProduct/<?= $data['data']->id ?>/<?= $data['user_id'] ?>" class="btn btn-primary">Comprar</a>
+<?php else: ?>
+    <a href="<?= ROOT ?>login/index/" class="btn btn-primary">Comprar</a>
+<?php endif; ?>

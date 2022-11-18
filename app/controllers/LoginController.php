@@ -9,6 +9,7 @@ class LoginController extends Controller
         parent::__construct();
         $this->model = $this->model('Login');
     }
+
     public function index()
     {
         if ($this->session->getLogin()) {

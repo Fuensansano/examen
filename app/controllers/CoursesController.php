@@ -12,22 +12,15 @@ class CoursesController extends Controller
 
     public function index()
     {
+        $courses = $this->model->getCourses();
 
-        if ($this->session->getLogin()) {
+        $data = [
+            'titulo' => 'Cursos en línea',
+            'menu' => true,
+            'active' => 'courses',
+            'data' => $courses,
+        ];
 
-            $courses = $this->model->getCourses();
-
-            $data = [
-                'titulo' => 'Cursos en línea',
-                'menu' => true,
-                'active' => 'courses',
-                'data' => $courses,
-            ];
-
-            $this->view('courses/index', $data);
-
-        } else {
-            header('location:' . ROOT);
-        }
+        $this->view('courses/index', $data);
     }
 }
