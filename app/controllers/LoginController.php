@@ -9,9 +9,12 @@ class LoginController extends Controller
         parent::__construct();
         $this->model = $this->model('Login');
     }
-
     public function index()
     {
+        if ($this->session->getLogin()) {
+            header('Location: ' . ROOT . 'shop/index');
+        }
+
         if (isset($_COOKIE['shoplogin'])) {
 
             $value = explode('|', $_COOKIE['shoplogin']);
@@ -348,6 +351,7 @@ class LoginController extends Controller
 
             if ( ! $errors ) {
                 $data = $this->model->getUserByEmail($user);
+                $data->isAdmin = false;
                 $this->session->login($data);
 
                 header("location:" . ROOT . 'shop');
@@ -360,13 +364,8 @@ class LoginController extends Controller
                 ];
                 $this->view('login', $data);
             }
-
         } else {
-
             $this->index();
-
         }
-
-
     }
 }

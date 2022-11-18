@@ -65,12 +65,18 @@
             </div>
         <?php endif; ?>
         <?php if(isset($data['admin']) && $data['admin']): ?>
-            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+            <ul class="navbar-nav mt-2 mt-lg-0">
                 <li class="nav-item">
                     <a href="<?= ROOT ?>adminUser" class="nav-link">Usuarios</a>
                 </li>
                 <li class="nav-item">
                     <a href="<?= ROOT ?>adminProduct" class="nav-link">Productos</a>
+                </li>
+            </ul>
+
+            <ul class="nav navbar-nav navbar-right justify-content-end">
+                <li class="nav-item">
+                    <a href="<?= ROOT ?>admin/logout" class="nav-link text-light">Salir</a>
                 </li>
             </ul>
         <?php endif; ?>

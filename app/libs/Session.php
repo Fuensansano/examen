@@ -24,10 +24,10 @@ class Session
         }
     }
 
-    public function login($user)
+    public function login($user) // en el login le pasa un objeto(usuario) en administrador le pasa un array OJITTTO
     {
         if ($user) {
-            $this->user = $user;
+            $this->user = $user; //todo el array se guarda en user o el objeto
             $_SESSION['user'] = $user;
             $this->login = true;
         }
@@ -76,5 +76,13 @@ class Session
         unset($db);
 
         return ($data->total ?? 0);
+    }
+
+    public function isAdmin()
+    {
+        if (!isset($this->user)) {
+            return false;
+        }
+        return $this->user->isAdmin;
     }
 }
