@@ -239,6 +239,39 @@ ALTER TABLE `users`
   MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
+CREATE TABLE IF NOT EXISTS addresses (
+     id         INT          NOT NULL AUTO_INCREMENT COMMENT 'id de la tabla addresses',
+     address    VARCHAR(500) NOT NULL,
+     city       VARCHAR(100) NOT NULL,
+     state      VARCHAR(100) NOT NULL,
+     country    VARCHAR(100) NOT NULL,
+     zipcode    VARCHAR(10)  NOT NULL,
+     user_id    INT          NOT NULL,
+     created_at TIMESTAMP DEFAULT NOW(),
+     deleted_at TIMESTAMP DEFAULT NULL,
+     PRIMARY KEY (id),
+     FOREIGN KEY (user_id)
+         REFERENCES users (id)
+         ON UPDATE CASCADE
+);
+
+INSERT INTO addresses (address,city,state,country,zipcode, user_id)
+SELECT address,city,state,country,zipcode, id AS user_id FROM users;
+
+ALTER TABLE `users`
+    CHANGE `address` `address` VARCHAR(150) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL,
+    CHANGE `city` `city` VARCHAR(100) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL,
+    CHANGE `state` `state` VARCHAR(50) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL,
+    CHANGE `zipcode` `zipcode` VARCHAR(10) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL,
+    CHANGE `country` `country` VARCHAR(100) CHARACTER SET latin1 COLLATE latin1_spanish_ci NULL;
+
+ALTER TABLE `users`
+    DROP `address`,
+    DROP `city`,
+    DROP `state`,
+    DROP `zipcode`,
+    DROP `country`;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

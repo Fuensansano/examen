@@ -75,27 +75,22 @@ class CartController extends Controller
 
     public function checkout()
     {
-        if ($this->session->getLogin()) {
-
-            $user = $this->session->getUser();
-
-            $data = [
-                'titulo' => 'Carrito | Datos de envío',
-                'subtitle' => 'Checkout | Verificar dirección de envío',
-                'menu' => true,
-                'data' => $user,
-            ];
-            $this->view('carts/address', $data);
-
-        } else {
-            $data = [
-                'titulo' => 'Carrito | Checkout',
-                'subtitle' => 'Checkout | Iniciar sesion',
-                'menu' => true
-            ];
-
-            $this->view('carts/checkout', $data);
+        if (!$this->session->getLogin()) {
+            header('Location:' . ROOT . 'login/index');
         }
+
+        $user = $this->session->getUser();
+        $addressController = $this->createAddressController();
+        $address = $addressController->findAddressByUserId($user->id);
+
+        $data = [
+            'titulo' => 'Carrito | Datos de envío',
+            'subtitle' => 'Checkout | Verificar dirección de envío',
+            'menu' => true,
+            'data' => $address,
+        ];
+        $this->view('address/index', $data);
+
     }
 
     public function paymentmode()
@@ -111,8 +106,11 @@ class CartController extends Controller
 
     public function verify()
     {
+
         $user = $this->session->getUser();
         $cart = $this->model->getCart($user->id);
+        $addressController = $this->createAddressController();
+        $address = $addressController->findAddressByUserId($user->id);
         $payment = $_POST['payment'] ?? '';
 
         $data = [
@@ -120,6 +118,7 @@ class CartController extends Controller
             'menu' => true,
             'payment' => $payment,
             'user' => $user,
+            'address' => $address,
             'data' => $cart,
         ];
 
@@ -156,7 +155,11 @@ class CartController extends Controller
             $this->view('mensaje', $data);
 
         }
+    }
 
-
+    private function createAddressController()
+    {
+        require_once '../app/controllers/AddressController.php';
+        return new AddressController();
     }
 }
