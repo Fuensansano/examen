@@ -38,14 +38,13 @@ class AdminController extends Controller
             $dataForm = [
                 'user' => $user,
                 'password' => $password,
-                'isAdmin' => true,
             ];
 
             if(empty($user)) {
-                array_push($errors, 'El usuario es requerido');
+                $errors[] = 'El usuario es requerido';
             }
             if(empty($password)) {
-                array_push($errors, 'La contraseña es requerida');
+                $errors[] = 'La contraseña es requerida';
             }
 
             if ( ! $errors ) {
@@ -53,13 +52,8 @@ class AdminController extends Controller
                 $errors = $this->model->verifyUser($dataForm);
 
                 if ( ! $errors ) {
-
-                    /*
-                     * he casteado a objeto porque en el loginController lo que le llega es un objeto y
-                     * en el adminController le llegaba un array y para poder unificarlo para entenderlo mejor, he
-                     * realizado un casteo a objeto, únicamente para aclararme más
-                     */
-                    $this->session->login((object) $dataForm);
+                    $admin = $this->model->getAdminByEmail($user);
+                    $this->session->adminLogin($admin);
                     header("LOCATION:" . ROOT . 'AdminShop');
                 }
             }
@@ -78,7 +72,7 @@ class AdminController extends Controller
 
     public function logout()
     {
-        $this->session->logout();
+        $this->session->adminLogout();
         header('location:' . ROOT);
     }
 }

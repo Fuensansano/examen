@@ -12,7 +12,7 @@ class AdminShopController extends Controller
 
     public function index()
     {
-        if ($this->session->getLogin()) {
+        if ($this->session->isAdmin()) {
             $data = [
                 'titulo' => 'Bienvenid@ a la administración de la tienda',
                 'menu' => false,

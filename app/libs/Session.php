@@ -4,6 +4,7 @@ class Session
 {
     private $login = false;
     private $user;
+    private $admin;
     private $cartTotal;
 
     public function __construct()
@@ -11,6 +12,12 @@ class Session
         if(!isset($_SESSION))
         {
             session_start();
+        }
+
+        if (isset($_SESSION['admin'])) {
+            $this->admin = $_SESSION['admin'];
+        } else {
+            unset($this->admin);
         }
 
         if (isset($_SESSION['user'])) {
@@ -24,10 +31,10 @@ class Session
         }
     }
 
-    public function login($user) // en el login le pasa un objeto(usuario) en administrador le pasa un array OJITTTO
+    public function login($user)
     {
         if ($user) {
-            $this->user = $user; //todo el array se guarda en user o el objeto
+            $this->user = $user;
             $_SESSION['user'] = $user;
             $this->login = true;
         }
@@ -37,6 +44,23 @@ class Session
     {
         unset($_SESSION['user']);
         unset($this->user);
+        session_destroy();
+        $this->login = false;
+    }
+
+    public function adminLogin($admin)
+    {
+        if ($admin) {
+            $this->admin = $admin;
+            $_SESSION['admin'] = $admin;
+            $this->login = true;
+        }
+    }
+
+    public function adminLogout()
+    {
+        unset($_SESSION['admin']);
+        unset($this->admin);
         session_destroy();
         $this->login = false;
     }
@@ -78,11 +102,11 @@ class Session
         return ($data->total ?? 0);
     }
 
-    public function isAdmin()
+    public function isAdmin(): bool
     {
-        if (!isset($this->user)) {
+        if (!isset($this->admin)) {
             return false;
         }
-        return $this->user->isAdmin;
+        return true;
     }
 }

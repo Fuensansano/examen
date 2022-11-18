@@ -12,7 +12,7 @@ class AdminProductController extends Controller
 
     public function index()
     {
-        if ($this->session->getLogin()) {
+        if ($this->session->isAdmin()) {
 
             $products = $this->model->getProducts();
             $type = $this->model->getConfig('productType');

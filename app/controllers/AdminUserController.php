@@ -12,7 +12,7 @@ class AdminUserController extends Controller
 
     public function index()
     {
-        if ($this->session->getLogin()) {
+        if ($this->session->isAdmin()) {
 
             $users = $this->model->getUsers();
 
@@ -27,7 +27,6 @@ class AdminUserController extends Controller
         } else {
             header('LOCATION:' . ROOT . 'admin');
         }
-
     }
 
     public function create(): void
