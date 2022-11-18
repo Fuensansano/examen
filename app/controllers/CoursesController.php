@@ -6,14 +6,14 @@ class CoursesController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('Course');
     }
 
     public function index()
     {
-        $session = new Session();
 
-        if ($session->getLogin()) {
+        if ($this->session->getLogin()) {
 
             $courses = $this->model->getCourses();
 

@@ -6,14 +6,13 @@ class AdminShopController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('AdminShop');
     }
 
     public function index()
     {
-        $session = new Session();
-
-        if ($session->getLogin()) {
+        if ($this->session->getLogin()) {
             $data = [
                 'titulo' => 'Bienvenid@ a la administración de la tienda',
                 'menu' => false,
@@ -24,6 +23,5 @@ class AdminShopController extends Controller
         } else {
             header('LOCATION:' . ROOT . 'admin');
         }
-
     }
 }

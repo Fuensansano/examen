@@ -6,16 +6,15 @@ class CartController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('Cart');
     }
 
     public function index($errors = [])
     {
-        $session = new Session();
+        if ($this->session->getLogin()) {
 
-        if ($session->getLogin()) {
-
-            $user_id = $session->getUserId();
+            $user_id = $this->session->getUserId();
             $cart = $this->model->getCart($user_id);
 
             $data = [
@@ -76,11 +75,9 @@ class CartController extends Controller
 
     public function checkout()
     {
-        $session = new Session();
+        if ($this->session->getLogin()) {
 
-        if ($session->getLogin()) {
-
-            $user = $session->getUser();
+            $user = $this->session->getUser();
 
             $data = [
                 'titulo' => 'Carrito | Datos de envío',
@@ -114,8 +111,7 @@ class CartController extends Controller
 
     public function verify()
     {
-        $session = new Session();
-        $user = $session->getUser();
+        $user = $this->session->getUser();
         $cart = $this->model->getCart($user->id);
         $payment = $_POST['payment'] ?? '';
 
@@ -132,8 +128,7 @@ class CartController extends Controller
 
     public function thanks()
     {
-        $session = new Session();
-        $user = $session->getUser();
+        $user = $this->session->getUser();
 
         if ($this->model->closeCart($user->id, 1)) {
 

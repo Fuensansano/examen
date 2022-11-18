@@ -6,6 +6,7 @@ class LoginController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('Login');
     }
 
@@ -347,8 +348,7 @@ class LoginController extends Controller
 
             if ( ! $errors ) {
                 $data = $this->model->getUserByEmail($user);
-                $session = new Session();
-                $session->login($data);
+                $this->session->login($data);
 
                 header("location:" . ROOT . 'shop');
             } else {

@@ -2,6 +2,13 @@
 
 class Controller
 {
+    public $session;
+
+    public function __construct()
+    {
+        $this->session = new Session();
+    }
+
     public function model($model)
     {
         require_once '../app/models/' . $model . '.php';

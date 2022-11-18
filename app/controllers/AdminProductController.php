@@ -6,14 +6,13 @@ class AdminProductController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('AdminProduct');
     }
 
     public function index()
     {
-        $session = new Session();
-
-        if ($session->getLogin()) {
+        if ($this->session->getLogin()) {
 
             $products = $this->model->getProducts();
             $type = $this->model->getConfig('productType');
@@ -357,5 +356,7 @@ class AdminProductController extends Controller
             'type' => $typeConfig,
             'product' => $product,
         ];
+
+        $this->view('admin/products/delete', $data);
     }
 }

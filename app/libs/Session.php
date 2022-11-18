@@ -8,7 +8,10 @@ class Session
 
     public function __construct()
     {
-        session_start();
+        if(!isset($_SESSION))
+        {
+            session_start();
+        }
 
         if (isset($_SESSION['user'])) {
             $this->user = $_SESSION['user'];
@@ -50,16 +53,23 @@ class Session
 
     public function getUserId()
     {
+        if (!isset($this->user, $this->user->id)) {
+            return null;
+        }
         return $this->user->id;
     }
 
     public function cartTotal()
     {
+        if (!$this->getUserId()) {
+            return 0;
+        }
+
         $db = Mysqldb::getInstance()->getDatabase();
 
         $sql = 'SELECT sum(p.price * c.quantity) - sum(c.discount) + sum(c.send) as total
-                FROM carts as c, products as p
-                WHERE c.user_id=:user_id AND c.product_id=p.id AND c.state=0';
+            FROM carts as c, products as p
+            WHERE c.user_id=:user_id AND c.product_id=p.id AND c.state=0';
         $query = $db->prepare($sql);
         $query->execute([':user_id' => $this->getUserId()]);
         $data = $query->fetch(PDO::FETCH_OBJ);

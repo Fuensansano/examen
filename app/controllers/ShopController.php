@@ -6,14 +6,13 @@ class ShopController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('Shop');
     }
 
     public function index()
     {
-        $session = new Session();
-
-        if ($session->getLogin()) {
+        if ($this->session->getLogin()) {
 
             $mostSold = $this->model->getMostSold();
             $news = $this->model->getNews();
@@ -35,15 +34,12 @@ class ShopController extends Controller
 
     public function logout()
     {
-        $session = new Session();
-        $session->logout();
+        $this->session->logout();
         header('location:' . ROOT);
     }
 
     public function show($id, $back = '')
     {
-        $session = new Session();
-
         $product = $this->model->getProductById($id);
 
         $data = [
@@ -53,7 +49,7 @@ class ShopController extends Controller
             'back' => $back,
             'errors' => [],
             'data' => $product,
-            'user_id' => $session->getUserId(),
+            'user_id' => $this->session->getUserId(),
         ];
 
         $this->view('shop/show', $data);
@@ -61,9 +57,8 @@ class ShopController extends Controller
 
     public function whoami()
     {
-        $session = new Session();
 
-        if ($session->getLogin()) {
+        if ($this->session->getLogin()) {
 
             $data = [
                 'titulo' => 'Quienes somos',
@@ -136,10 +131,7 @@ class ShopController extends Controller
                 $this->view('shop/contact', $data);
             }
         } else {
-
-            $session = new Session();
-
-            if ($session->getLogin()) {
+            if ($this->session->getLogin()) {
 
                 $data = [
                     'titulo' => 'Contacta con nosotros',

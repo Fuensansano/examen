@@ -6,6 +6,7 @@ class AdminController extends Controller
 
     public function __construct()
     {
+        parent::__construct();
         $this->model = $this->model('Admin');
     }
 
@@ -46,9 +47,7 @@ class AdminController extends Controller
                 $errors = $this->model->verifyUser($dataForm);
 
                 if ( ! $errors ) {
-
-                    $session = new Session();
-                    $session->login($dataForm);
+                    $this->session->login($dataForm);
 
                     header("LOCATION:" . ROOT . 'AdminShop');
                 }
